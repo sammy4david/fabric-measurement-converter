@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#3CC85E">
+<meta name="description" content="Convert trouser lengths to yards and work out fabric cost in naira.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="64x64" href="icons/favicon-64.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Fabric Convert">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Fabric Measurement Convertion Tool</title>
+<style>
+:root {
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  --green: #3CC85E;
+  --on-green: #0c2e18;
+  --bg: #e9f4ec;
+  --surface: #ffffff;
+  --ink: #12301e;
+  --muted: #55705f;
+  --line: #bfd8c8;
+  --tint: #e4f7ea;
+  --accent-text: #1b7f38;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1a12;
+    --surface: #15271b;
+    --ink: #e6f4ea;
+    --muted: #94b3a0;
+    --line: #2c4a38;
+    --tint: #1b3626;
+    --accent-text: #3CC85E;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1a12;
+  --surface: #15271b;
+  --ink: #e6f4ea;
+  --muted: #94b3a0;
+  --line: #2c4a38;
+  --tint: #1b3626;
+  --accent-text: #3CC85E;
+  color-scheme: dark;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: "Avenir Next", "Segoe UI", system-ui, -apple-system, Roboto, sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+main {
+  width: 100%;
+  max-width: 440px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  overflow: hidden;
+}
+header {
+  background: var(--green);
+  color: var(--on-green);
+  padding: 22px 22px 0;
+}
+.title-row { display: flex; align-items: center; gap: 14px; }
+.logo {
+  flex: none;
+  width: 54px; height: 54px;
+  border-radius: 50%;
+  background: var(--on-green);
+  color: var(--green);
+  display: grid; place-items: center;
+}
+.logo svg { width: 30px; height: 30px; }
+h1 { font-size: 1.35rem; line-height: 1.2; margin: 0; font-weight: 800; }
+p.sub { margin: 12px 0 16px; font-size: 0.93rem; line-height: 1.45; }
+.tape {
+  height: 22px;
+  margin: 0 -22px;
+  background:
+    repeating-linear-gradient(90deg, var(--on-green) 0 2px, transparent 2px 40px) bottom / 100% 20px no-repeat,
+    repeating-linear-gradient(90deg, var(--on-green) 0 1.5px, transparent 1.5px 20px) bottom / 100% 13px no-repeat,
+    repeating-linear-gradient(90deg, var(--on-green) 0 1px, transparent 1px 10px) bottom / 100% 7px no-repeat;
+  background-color: #52d871;
+  border-top: 2px solid var(--on-green);
+}
+.body { padding: 22px; }
+.switch-row {
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-bottom: 22px; padding: 10px 14px;
+  border: 1.5px solid var(--line); border-radius: 12px; background: var(--tint);
+}
+.switch-row span { font-size: 0.95rem; font-weight: 700; }
+.switch {
+  position: relative; width: 54px; height: 30px; flex: none;
+  border: 0; border-radius: 15px; background: var(--line); cursor: pointer; padding: 0;
+  transition: background 0.2s;
+}
+.switch::after {
+  content: ""; position: absolute; top: 3px; left: 3px; width: 24px; height: 24px;
+  border-radius: 50%; background: var(--surface); transition: transform 0.2s;
+}
+.switch[aria-checked="true"] { background: var(--green); }
+.switch[aria-checked="true"]::after { transform: translateX(24px); background: var(--on-green); }
+.switch:focus-visible, input:focus-visible { outline: 3px solid var(--green); outline-offset: 2px; }
+.field { margin-bottom: 8px; }
+label { display: flex; align-items: center; gap: 10px; font-size: 0.95rem; margin-bottom: 8px; font-weight: 700; }
+.badge {
+  width: 34px; height: 34px; border-radius: 10px; flex: none;
+  background: var(--green); color: var(--on-green);
+  display: grid; place-items: center;
+}
+.badge svg { width: 21px; height: 21px; }
+input {
+  width: 100%; font: inherit; font-size: 1.3rem; font-variant-numeric: tabular-nums;
+  padding: 13px 14px; border: 2px solid var(--line); border-radius: 12px;
+  background: var(--surface); color: var(--ink);
+}
+input:focus-visible { border-color: var(--green); }
+input[readonly] { background: var(--tint); border-color: var(--green); font-weight: 800; color: var(--accent-text); }
+.arrow { display: flex; justify-content: center; margin: 4px 0 12px; color: var(--green); }
+.arrow svg { width: 26px; height: 26px; }
+.hint { margin: 14px 0 0; color: var(--muted); font-size: 0.85rem; line-height: 1.5; }
+.cost-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
+.cost-row label { margin-bottom: 8px; font-size: 0.9rem; }
+.cost-row input { font-size: 1.1rem; padding: 12px 12px; min-width: 0; }
+.naira-wrap { position: relative; }
+.naira-wrap .sym { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-weight: 800; color: var(--accent-text); pointer-events: none; }
+.naira-wrap input { padding-left: 32px; }
+.clear-btn { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; margin-top: 18px; padding: 13px 16px; font: inherit; font-size: 1rem; font-weight: 800; color: var(--on-green); background: var(--green); border: 0; border-radius: 12px; cursor: pointer; }
+.clear-btn svg { width: 18px; height: 18px; }
+.clear-btn:hover { filter: brightness(0.95); }
+.clear-btn:active { transform: translateY(1px); }
+.clear-btn:focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+footer { background: var(--green); color: var(--on-green); text-align: center; padding: 14px 22px; font-size: 0.9rem; font-weight: 700; }
+@media (prefers-reduced-motion: reduce) { .switch, .switch::after { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="title-row">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10l1.2 18h-4.6L12 10.5 10.4 21H5.8z"/><path d="M7.3 7h9.4"/></svg>
+      </div>
+      <h1>Fabric Measurement Convertion Tool</h1>
+    </div>
+    <p class="sub" id="sub">Each trouser is 45 inches long. Enter how many you have to get the total in yards.</p>
+    <div class="tape" aria-hidden="true"></div>
+  </header>
+
+  <div class="body">
+    <div class="switch-row">
+      <span id="switchLabel">Change to yard length</span>
+      <button type="button" class="switch" id="flip" role="switch" aria-checked="false" aria-labelledby="switchLabel"></button>
+    </div>
+
+    <div class="field">
+      <label for="qty"><span class="badge" id="inIcon" aria-hidden="true"></span><span id="inLabel">Number of trousers</span></label>
+      <input id="qty" type="number" inputmode="decimal" min="0" step="any" placeholder="e.g. 4" autocomplete="off">
+    </div>
+
+    <div class="arrow" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v15M6 13l6 6 6-6"/></svg>
+    </div>
+
+    <div class="field">
+      <label for="out"><span class="badge" id="outIcon" aria-hidden="true"></span><span id="outLabel">Total length (yards)</span></label>
+      <input id="out" type="text" readonly placeholder="0" aria-live="polite">
+    </div>
+
+    <div class="cost-row">
+      <div class="field">
+        <label for="price"><span class="badge" aria-hidden="true">₦</span><span>Price per yard</span></label>
+        <div class="naira-wrap">
+          <span class="sym" aria-hidden="true">₦</span>
+          <input id="price" type="number" inputmode="decimal" min="0" step="any" placeholder="0" autocomplete="off">
+        </div>
+      </div>
+      <div class="field">
+        <label for="cost"><span class="badge" aria-hidden="true">₦</span><span>Total cost</span></label>
+        <input id="cost" type="text" readonly placeholder="₦0" aria-live="polite">
+      </div>
+    </div>
+
+    <button type="button" class="clear-btn" id="clear">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>
+      Clear all fields
+    </button>
+
+    <p class="hint" id="hint">1 yard = 36 inches, so each trouser is 1.25 yards (1 yard = 0.8 trouser). Total cost = yards × price per yard.</p>
+  </div>
+  <footer>Tool designed for NK Fabrics</footer>
+</main>
+<script>
+(function () {
+  var TROUSER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10l1.2 18h-4.6L12 10.5 10.4 21H5.8z"/><path d="M7.3 7h9.4"/></svg>';
+  var TAPE = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="11" r="6.5"/><circle cx="9" cy="11" r="2"/><path d="M15.5 11H22v7H8.5"/><path d="M12 18v-2.5M15 18v-2M18 18v-2.5M21 18v-2"/></svg>';
+  var qty = document.getElementById("qty");
+  var out = document.getElementById("out");
+  var flip = document.getElementById("flip");
+  var inLabel = document.getElementById("inLabel");
+  var outLabel = document.getElementById("outLabel");
+  var inIcon = document.getElementById("inIcon");
+  var outIcon = document.getElementById("outIcon");
+  var sub = document.getElementById("sub");
+  var switchLabel = document.getElementById("switchLabel");
+  var PER_TROUSER_INCHES = 45;
+  var INCHES_PER_YARD = 36;
+  var reversed = false;
+  function round(x) { return Math.round(x * 10000) / 10000; }
+  var price = document.getElementById("price");
+  var cost = document.getElementById("cost");
+  var currentYards = null;
+  function updateCost() {
+    var p = parseFloat(price.value);
+    if (currentYards === null || isNaN(p) || p < 0) { cost.value = ""; return; }
+    var total = Math.round(currentYards * p * 100) / 100;
+    cost.value = "₦" + total.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+  function update() {
+    var n = parseFloat(qty.value);
+    if (isNaN(n) || n < 0) { out.value = ""; currentYards = null; updateCost(); return; }
+    if (reversed) {
+      currentYards = n;
+      out.value = round((n * INCHES_PER_YARD) / PER_TROUSER_INCHES);
+    } else {
+      currentYards = (n * PER_TROUSER_INCHES) / INCHES_PER_YARD;
+      out.value = round(currentYards) + " yd";
+    }
+    updateCost();
+  }
+  function render() {
+    flip.setAttribute("aria-checked", reversed ? "true" : "false");
+    if (reversed) {
+      inLabel.textContent = "Total length (yards)";
+      outLabel.textContent = "Number of trousers";
+      inIcon.innerHTML = TAPE;
+      outIcon.innerHTML = TROUSER;
+      sub.textContent = "Each trouser is 45 inches long. Enter a length in yards to see how many trousers it makes.";
+      qty.placeholder = "e.g. 5";
+      switchLabel.textContent = "Change to trouser length";
+    } else {
+      inLabel.textContent = "Number of trousers";
+      outLabel.textContent = "Total length (yards)";
+      inIcon.innerHTML = TROUSER;
+      outIcon.innerHTML = TAPE;
+      sub.textContent = "Each trouser is 45 inches long. Enter how many you have to get the total in yards.";
+      qty.placeholder = "e.g. 4";
+      switchLabel.textContent = "Change to yard length";
+    }
+    qty.value = "";
+    out.value = "";
+    currentYards = null;
+    updateCost();
+  }
+  flip.addEventListener("click", function () { reversed = !reversed; render(); });
+  qty.addEventListener("input", update);
+  price.addEventListener("input", updateCost);
+  document.getElementById("clear").addEventListener("click", function () {
+    qty.value = "";
+    out.value = "";
+    price.value = "";
+    cost.value = "";
+    currentYards = null;
+    qty.focus();
+  });
+  render();
+})();
+</script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  });
+}
+</script>
+</body>
+</html>
